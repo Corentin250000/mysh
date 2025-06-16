@@ -2,37 +2,52 @@
 ** EPITECH PROJECT, 2025
 ** main.c
 ** File description:
-** Main file
+** minishell1 main
 */
 
-#include "../include/minishell2.h"
+#include "../include/my.h"
 
-static int after_loop_program(int verification, int return_value,
-    command_t *infos)
+//sudo ln -s $(realpath ./42sh) /usr/local/bin/42sh
+//chmod +x 42sh
+int run_script(local_var_t *arr, const char *filename, char **env)
 {
-    if (!isatty(0) && verification != 84)
-        return final_free_structure(infos, return_value);
-    else if (verification == -255 && isatty(0))
-        return final_free_structure(infos, return_value);
-    return error_free_structure(infos, 84);
+    FILE *file = fopen(filename, "r");
+    char *line = malloc(sizeof(char) * 1024);
+    size_t len;
+
+    if (!file || !line)
+        return 1;
+    while (fgets(line, 1024, file)) {
+        len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n')
+            line[len - 1] = '\0';
+        if (line[0] == '\0' || line[0] == '#')
+            continue;
+        if (strncmp(line, "#!", 2) == 0)
+            continue;
+        handle_input(arr, line, env);
+    }
+    free(line);
+    fclose(file);
+    return 0;
 }
 
 int main(int ac, char **av, char **env)
 {
-    int verification = 0;
-    int return_value = 0;
-    command_t *infos = copy_env(env, ac);
+    int value;
+    local_var_t *arr = init_local_var_array(env);
 
-    if (!infos)
+    (void)ac;
+    (void)av;
+    if (!arr)
         return 84;
-    signal(SIGINT, SIG_IGN);
-    while (verification != -255 && verification != 84) {
-        verification = command(infos, &return_value);
-        if (verification == 84)
-            return error_free_structure(infos, 84);
-        if (!isatty(0) && verification == -1)
-            break;
-        free_content_structure(infos);
-    }
-    return after_loop_program(verification, return_value, infos);
+    ignore_signals();
+    load_history();
+    if (ac > 1) {
+        value = run_script(arr, av[1], env);
+    } else
+        value = get_prompt(arr, env);
+    save_history();
+    free_local_var(arr);
+    return value;
 }

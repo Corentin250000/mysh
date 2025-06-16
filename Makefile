@@ -1,94 +1,130 @@
 ##
-## EPITECH PROJECT, 2025
-## Makefile
+## EPITECH PROJECT, 2024
+## Makfile
 ## File description:
-## Makefile
+## Compilation tool Makefile
 ##
 
-SRC	=	src/main.c	\
-		src/ask_command.c	\
-		src/parsing.c	\
-		src/parsing_env.c	\
-		src/execution.c	\
-		src/find_path_command.c	\
-		src/make_fork.c	\
-		src/builtin.c	\
-		src/write_signal_message.c	\
-		src/preparation_next_iteration.c	\
-		src/my_free.c	\
-		src/update_env.c	\
-		src/command.c	\
-		src/error_handling_cd.c	\
-		src/error_handling_setenv.c	\
-		src/list_exec.c	\
-		src/parsing_pipe_redirections.c	\
-		src/exec_pipe.c	\
-		src/exec_redirection.c	\
+SRC	=	src/main.c\
+		src/put_color.c\
+		src/display_prompt.c\
+		src/get_prompt.c\
+		src/open_file.c\
+		src/exec_basic_command.c\
+		src/parser.c\
+		src/get_signals.c\
+		src/get_cd.c\
+		src/get_setenv.c\
+		src/get_unsetenv.c\
+		src/get_pipes.c\
+		src/get_redirect_right.c\
+		src/get_redirect_left.c\
+		src/clean_str.c\
+		src/alias/alias.c\
+		src/history/history.c\
+		src/history/init_struct.c\
+		src/history/exclamation.c\
+		src/handle_and_or.c\
+		src/call/call_builtin.c\
+		src/variables/add_locale_variable.c\
+		src/variables/detect_call_variable.c\
+		src/variables/replace_variable.c\
+		src/variables/search_variable.c\
+		src/variables/builtin.c\
+		src/variables/get_read_only.c\
+		src/variables/get_special_variables.c\
+		src/where.c\
+		src/which.c\
+		src/if.c\
+		src/redirect_signals.c\
+		src/alias/alias_param.c\
+		src/alias/check_function.c\
+		src/handle_magic_quote.c\
+		src/get_git_branch.c\
 
-SRC_UNIT_TESTS	=	src/ask_command.c	\
-					src/parsing.c	\
-					src/parsing_env.c	\
-					src/execution.c	\
-					src/find_path_command.c	\
-					src/make_fork.c	\
-					src/builtin.c	\
-					src/write_signal_message.c	\
-					src/preparation_next_iteration.c	\
-					src/my_free.c	\
-					src/update_env.c	\
-					src/command.c	\
-					src/list_exec.c	\
-					src/error_handling_cd.c	\
-					src/error_handling_setenv.c	\
-					src/parsing_pipe_redirections.c	\
-					src/exec_pipe.c	\
-					src/exec_redirection.c	\
-					tests/test_execution.c	\
-					tests/test_builtin.c	\
-					tests/test_find_path.c	\
+SRC_UNIT_TESTS	=	src/put_color.c\
+					src/display_prompt.c\
+					src/get_prompt.c\
+					src/open_file.c\
+					src/exec_basic_command.c\
+					src/parser.c\
+					src/get_signals.c\
+					src/get_cd.c\
+					src/get_setenv.c\
+					src/get_unsetenv.c\
+					src/get_pipes.c\
+					src/get_redirect_right.c\
+					src/get_redirect_left.c\
+					src/clean_str.c\
+					src/alias/alias.c\
+					src/history/history.c\
+					src/history/init_struct.c\
+					src/history/exclamation.c\
+					src/handle_and_or.c\
+					src/call/call_builtin.c\
+					src/variables/add_locale_variable.c\
+					src/variables/detect_call_variable.c\
+					src/variables/replace_variable.c\
+					src/variables/search_variable.c\
+					src/variables/builtin.c\
+					src/variables/get_read_only.c\
+					src/variables/get_special_variables.c\
+					src/where.c\
+					src/which.c\
+					src/if.c\
+					src/redirect_signals.c\
+					src/alias/alias_param.c\
+					src/alias/check_function.c\
+					src/handle_magic_quote.c\
+					src/get_git_branch.c\
+					tests/useful_functions.c\
+					tests/test_open_file.c\
+					tests/test_signals.c\
+					tests/test_local_variables.c\
 
 OBJ	=	$(SRC:.c=.o)
 
-OBJ_UNIT_TESTS	=	$(SRC_UNIT_TESTS:.c=.o)
+NAME	=	42sh
 
-NAME	=	mysh
+COVR =	--coverage -lcriterion
 
-CC	=	gcc
+LIB =	-Llib/my -lmy
 
-FLAGS	=	-Wall -Wextra -g -Iinclude
+CFLAGS =	-g -I include
 
-LIBS	=	-Llib/ -lmy
-
-CFLAGS	=	$(FLAGS) $(LIBS)
-
-$(NAME):
-		make re -C lib/ > /dev/null
-		$(CC) -o $(NAME) $(SRC) $(FLAGS) $(CFLAGS)
-
-all:	$(NAME)
+all: $(OBJ)
+	make -C lib/my > /dev/null
+	gcc $(CFLAGS) $(OBJ) -o $(NAME) $(LIB) -L include/
 
 clean:
-		rm -f $(OBJ)
-		rm -f $(OBJ_UNIT_TESTS)
-		find . -type f -name '*.gcda' -delete
-		find . -type f -name '*.gcno' -delete
-		find . -type f -name '*.gcov' -delete
-		find . -type f -name '*~' -delete
+	make clean -C lib/my > /dev/null
+	rm -f $(OBJ)
+	rm -f $(NAME)
 
 fclean:	clean
-		rm -f $(NAME)
-		rm -f unit_tests
+	make fclean -C lib/my > /dev/null
+	rm -f $(NAME)
+	rm -f *.gcno
+	rm -f *.gcda
+	rm -f unit_tests
 
-re:		fclean all
+re:	fclean all
 
-tests_run:	$(OBJ_UNIT_TESTS)
-		make re -C lib/ > /dev/null
-		$(CC) --coverage -lcriterion -o unit_tests $(SRC_UNIT_TESTS) $(CFLAGS)
-		./unit_tests --verbose
+all_test:
+	make -C ./lib/my > /dev/null
+
+unit_tests: all_test
+	gcc $(COVR) -o unit_tests $(SRC_UNIT_TESTS) $(LIB) $(CFLAGS)
+
+tests_run: unit_tests
+	./unit_tests --verbose
+
+gcovr:
+	gcovr --exclude tests/ --txt-metric branch
 
 coding_style:	fclean
 			coding-style . .
 			cat coding-style-reports.log
 			rm -f coding-style-reports.log
 
-.PHONY:	all clean fclean re tests_run coding_style
+.PHONY:	all clean fclean re all_test unit_tests tests_run gcovr coding_style
